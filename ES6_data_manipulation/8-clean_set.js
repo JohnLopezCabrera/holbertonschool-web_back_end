@@ -1,14 +1,17 @@
-export default function cleanSet(set, startString) {
-  if (typeof startString !== 'string') {
-    throw new TypeError('startString must be a string');
-  }
 
-  if (!startString) {
+export default function cleanSet(set, startString) {
+  const parts = [];
+  if (!set || !startString || !(set instanceof Set) || typeof startString !== 'string') {
     return '';
   }
+  for (const value of set.values()) {
+    if (typeof value === 'string' && value.startsWith(startString)) {
+      const valueSubStr = value.substring(startString.length);
 
-  return [...set]
-    .filter((value) => typeof value === 'string' && value.startsWith(startString))
-    .map((value) => value.slice(startString.length))
-    .join('-');
+      if (valueSubStr && valueSubStr !== value) {
+        parts.push(valueSubStr);
+      }
+    }
+  }
+  return parts.join('-');
 }
