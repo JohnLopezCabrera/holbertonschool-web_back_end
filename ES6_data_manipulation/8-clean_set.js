@@ -5,8 +5,7 @@ export default function cleanSet(set, startString) {
   // Remove startString from the beginning of each value
   // Join the results with '-' separator
   return [...set]
-    .filter(value => value.startsWith(startString))
-    .map(value => value.slice(startString.length))
+    .filter((value) => value.startsWith(startString))
+    .map((value) => value.slice(startString.length))
     .join('-');
 }
-
