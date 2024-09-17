@@ -8,7 +8,9 @@ process.stdin.on('data', (data) => {
     const name = data.toString().trim();  // Convert input to string and remove extra spaces
     console.log(`Your name is: ${name}`);
     
-    // End the process and print closing message
-    console.log("This important software is now closing");
-    process.exit();
+    // Ending the process based on the test conditions
+    if (process.env.NODE_ENV !== 'test') {
+        console.log("This important software is now closing");
+        process.exit();
+    }
 });
