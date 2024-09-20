@@ -1,53 +1,49 @@
-import { readFileSync } from 'fs';
+const fs = require('fs');
 
 function countStudents(path) {
   try {
     // Read the file synchronously
-    const data = readFileSync(path, 'utf8');
+    const data = fs.readFileSync(path, 'utf-8');
 
-    // Split the data into rows and filter out empty rows
-    const rows = data.split('\n').filter((row) => row.trim() !== '');
+    // Split file content by lines and filter out empty lines
+    const lines = data.split('\n').filter((line) => line.trim() !== '');
 
-    // Remove the header row (no need to store it in a variable)
-    rows.shift();
-
-    if (rows.length === 0) {
+    // Check if the file has any lines (besides the header)
+    if (lines.length < 2) {
       throw new Error('Cannot load the database');
     }
 
-    console.log(`Number of students: ${rows.length}`);
+    // Remove the first line (header)
+    const students = lines.slice(1);
 
+    // Initialize variables for counting
+    const totalStudents = students.length;
     const fields = {};
 
-    // Loop through each row
-    rows.forEach((row) => {
-      const student = row.split(',');
+    students.forEach((line) => {
+      // Destructure only the first name and field (omit lastname and age)
+      const [firstname, , , field] = line.split(',');
 
-      if (student.length === 4) {
-        const field = student[3];
-        const firstName = student[0];
-
-        // Group students by field
-        if (!Object.prototype.hasOwnProperty.call(fields, field)) {
-          fields[field] = [];
-        }
-        fields[field].push(firstName);
+      if (!Object.prototype.hasOwnProperty.call(fields, field)) {
+        fields[field] = [];
       }
+      fields[field].push(firstname);
     });
 
-    // Print the number of students and their names for each field
+    // Output the total number of students
+    console.log(`Number of students: ${totalStudents}`);
+
+    // Output the count and list of students by field
     for (const field in fields) {
       if (Object.prototype.hasOwnProperty.call(fields, field)) {
-        const students = fields[field];
-        console.log(
-          `Number of students in ${field}: ${students.length}. List: ${students.join(', ')}`,
-        );
+        const studentsInField = fields[field];
+        console.log(`Number of students in ${field}: ${studentsInField.length}. List: ${studentsInField.join(', ')}`);
       }
     }
   } catch (error) {
+    // Handle errors when the file cannot be loaded
     throw new Error('Cannot load the database');
   }
 }
 
-export default countStudents;
-
+module.exports = countStudents;
